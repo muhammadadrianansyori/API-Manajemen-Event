@@ -1,59 +1,173 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+<h1>Event Management API</h1>
+</div>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Deskripsi Singkat
+Event Management API adalah REST API berbasis Laravel untuk mengelola **event**, **kategori**, dan **partisipan** dengan sistem **role-based access control (Admin & User)** serta **JWT Authentication** untuk mengamankan endpoint.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirement
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Pastikan Anda telah menginstal:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Git (2.51.2 atau lebih baru)
+Composer (2.9.1 atau lebih baru)
+XAMPP (8.2.12)
+PHP (8.1+)
 
-## Learning Laravel
+yaml
+Copy code
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Cara Menjalankan Sistem
 
-## Laravel Sponsors
+### 1. Clone Repository
+git clone https://github.com/USERNAME/event-management-api.git
+cd event-management-api
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+shell
+Copy code
 
-### Premium Partners
+### 2. Install Dependency
+composer install
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+shell
+Copy code
 
-## Contributing
+### 3. Setup Environment
+Ubah .env.example menjadi .env
+Atur konfigurasi database MySQL
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+css
+Copy code
 
-## Code of Conduct
+<details>
+<summary>Contoh konfigurasi .env</summary>
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=event_api
+DB_USERNAME=root
+DB_PASSWORD=
 
-## Security Vulnerabilities
+bash
+Copy code
+</details>
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Generate App Key
+php artisan key:generate
+
+shell
+Copy code
+
+### 5. Setup JWT Authentication
+composer require tymon/jwt-auth
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+php artisan jwt:secret
+
+shell
+Copy code
+
+### 6. Migration & Seeder
+php artisan migrate
+php artisan db:seed
+
+shell
+Copy code
+
+### 7. Jalankan Server
+php artisan serve
+
+markdown
+Copy code
+
+---
+
+## Akun Uji Coba
+
+### Admin
+- email: `admin@example.com`
+- password: `password`
+- role: `admin`
+
+### User
+- email: `user@example.com`
+- password: `password`
+- role: `user`
+
+---
+
+## Hak Akses Role
+
+| Fitur | Admin | User |
+|------|------|------|
+| Login | ✅ | ✅ |
+| Lihat Event | ✅ | ✅ |
+| Buat Event | ✅ | ❌ |
+| Update Event | ✅ | ❌ |
+| Hapus Event | ✅ | ❌ |
+| Join Event | ❌ | ✅ |
+| Lihat Peserta Event | ✅ | ❌ |
+| CRUD Kategori | ✅ | ❌ |
+
+---
+
+## Endpoint API
+
+### Authentication
+- POST `/api/register`
+- POST `/api/login`
+- POST `/api/logout`
+- GET `/api/me`
+- PUT `/api/profile`
+
+### Event
+- GET `/api/events`
+- GET `/api/events/{id}`
+- POST `/api/events` (Admin)
+- PUT `/api/events/{id}` (Admin)
+- DELETE `/api/events/{id}` (Admin)
+- POST `/api/events/{id}/join` (User)
+- GET `/api/events/{id}/participants` (Admin)
+
+### Category
+- GET `/api/categories`
+- POST `/api/categories` (Admin)
+- PUT `/api/categories/{id}` (Admin)
+- DELETE `/api/categories/{id}` (Admin)
+
+---
+
+
+## Catatan Penting
+- Admin tidak diperbolehkan join event
+- User tidak bisa membuat event
+- Kategori tidak dapat dihapus jika masih digunakan oleh event
+- Semua endpoint dilindungi JWT Authentication
+
+---
+
+## TODO
+- [x] JWT Authentication
+- [x] Role-based access control
+- [x] CRUD Event
+- [x] Join Event (User)
+- [x] Cek Partisipan Event
+- [x] CRUD Category
+- [x] Seeder Admin & User
+- [ ] Testing Endpoint
+- [ ] Postman Collection Publish
+
+---
+
+## Author
+Nama Kamu  
+Project UAS – Event Management API
+
+---
 
 ## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Free to use for educational purposes
