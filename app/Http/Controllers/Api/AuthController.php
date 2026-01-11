@@ -6,41 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (! $token = JWTAuth::attempt($credentials)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email atau password salah'
-            ], 401);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Login berhasil',
-            'data' => [
-                'user' => auth()->user(),
-                'token' => $token
-            ]
-        ]);
-    }
-
+    /**
+     * Register user baru
+     */
     public function register(Request $request)
     {
+        // Validasi input
         $validated = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
         ]);
 
+        // Buat user baru
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -53,12 +35,56 @@ class AuthController extends Controller
             'data' => $user
         ], 201);
     }
-    public function me()
-{
-    return response()->json([
-        'success' => true,
-        'user' => auth()->user()
-    ]);
-}
 
+    /**
+     * Login user
+     */
+    public function login(Request $request)
+    {
+        // Validasi input
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        try {
+            // Coba generate token JWT
+            if (! $token = JWTAuth::attempt($credentials)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email atau password salah'
+                ], 401);
+            }
+        } catch (JWTException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak bisa membuat token'
+            ], 500);
+        }
+
+        // Ambil user yang login
+        $user = JWTAuth::user();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login berhasil',
+            'data' => [
+                'user' => $user,
+                'token' => $token
+            ]
+        ]);
+    }
+
+    /**
+     * Ambil info user yang login
+     */
+    public function me()
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        return response()->json([
+            'success' => true,
+            'user' => $user
+        ]);
+    }
 }
