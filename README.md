@@ -22,15 +22,15 @@ mata kuliah **Pemrograman Web Service**.
 - Postman (API Testing & Documentation)
 - GitHub (Version Control)
 
-## 🚀 Fitur Utama
-- Autentikasi pengguna (Register dan Login)
-- Manajemen data event (Create, Read, Update, Delete)
-- Manajemen kategori event
-- Pendaftaran peserta ke event
-- Pencatatan log aktivitas sistem
-- Response API dalam format JSON
+
+## Fitur Utama
+- Autentikasi User: Sistem daftar (Register) dan masuk (Login) yang aman menggunakan token.
+- Manajemen Event (CRUD): Kelola data acara secara lengkap (Tambah, Lihat, Ubah, Hapus).
+- Hak Akses (Security): Proteksi data agar hanya pengguna sah yang bisa memodifikasi event.
+- Validasi Input: Menjamin data yang masuk (seperti tanggal & nama event) sesuai format dan benar.
+- RESTful API: Output data dalam format JSON yang siap dikonsumsi oleh aplikasi Android, iOS, atau Web
   
-## 🧑‍🤝‍🧑 Anggota Kelompok
+## Anggota Kelompok
 - **Muhammad Adrian Ansyori** – Ketua Kelompok  
   Tugas:
   - Perancangan arsitektur sistem
@@ -50,7 +50,7 @@ mata kuliah **Pemrograman Web Service**.
   - Penyusunan dokumentasi API
 
 
-## ▶️ Cara Menjalankan Project
+## Cara Menjalankan Project
 1. Clone repository ini:
     git clone https://github.com/muhammadadrianansyori/api-manajemen-event.git
 2. Masuk ke folder project:cd api-manajemen-event
