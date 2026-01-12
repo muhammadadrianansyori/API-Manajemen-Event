@@ -1,0 +1,78 @@
+Dokumentasi API - Manajemen Event
+Dokumentasi ini berisi daftar endpoint untuk mengelola event, kategori, dan pendaftaran peserta. Pastikan server sudah berjalan di http://127.0.0.1:8000.
+
+?? Autentikasi (JWT)
+Semua endpoint kecuali Login dan Register membutuhkan Header:
+Authorization: Bearer <your_token>
+1. Register Akun
+* Method: POST
+* URL: /api/auth/register
+* Body (form-data):
+o name: Nama Lengkap
+o email: Alamat Email
+o password: Minimal 6 karakter
+o password_confirmation: Ulangi password
+2. Login
+* Method: POST
+* URL: /api/auth/login
+* Body (form-data): email, password
+* Response: Mengembalikan access_token untuk digunakan di request selanjutnya.
+3. Cek Profil (Me) & Logout
+* Me: POST /api/auth/me (Melihat data user yang sedang login)
+* Logout: POST /api/auth/logout (Menghapus token sesi aktif)
+
+?? Kategori Event
+1. List Kategori
+* Method: GET
+* URL: /api/categories
+* Keterangan: Menampilkan semua kategori event yang tersedia.
+2. Tambah Kategori (Admin Only)
+* Method: POST
+* URL: /api/categories
+* Body: {"name": "Webinar"}
+
+?? Manajemen Event
+1. Lihat Semua Event
+* Method: GET
+* URL: /api/events
+* Fitur: Mendukung pagination otomatis.
+2. Tambah Event Baru
+* Method: POST
+* URL: /api/events
+* Body (form-data):
+o title: Nama Event
+o description: Detail event
+o date: Format YYYY-MM-DD
+o location: Tempat/Link
+o category_id: ID dari kategori yang ada
+o capacity: Jumlah maksimal peserta (angka)
+3. Update & Delete Event
+* Update: PUT/PATCH /api/events/{id}
+* Delete: DELETE /api/events/{id}
+
+?? Pendaftaran Peserta
+1. Daftar ke Event
+* Method: POST
+* URL: /api/registrations
+* Body: ```json
+{
+"event_id": 1,
+"notes": "Saya ingin belajar Laravel"
+}
+* Logika: Sistem akan otomatis mencatat user_id dari token JWT yang aktif.
+2. Lihat Riwayat Pendaftaran
+* Method: GET
+* URL: /api/registrations
+* Response: Menampilkan daftar event yang diikuti oleh user.
+3. Batalkan Pendaftaran
+* Method: DELETE /api/registrations/{id}
+
+?? Log Aktivitas (Audit Trail)
+* Method: GET
+* URL: /api/logs
+* Keterangan: Menampilkan catatan aktivitas sistem seperti "User A mendaftar event B" atau "Admin menghapus event C".
+
+?? Response Code Standar
+CodeArtiKeterangan200/201SuccessRequest berhasil diproses.401UnauthorizedToken salah atau sudah expired.403ForbiddenAnda bukan Admin.422Validation ErrorData yang dikirim tidak lengkap/salah format.404Not FoundData atau Endpoint tidak ditemukan.
+Link Dokumentasi Interaktif: Postman Documenter - API Manajemen Event
+
