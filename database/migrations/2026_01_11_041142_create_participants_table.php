@@ -1,32 +1,63 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Http\Controllers\Api;
 
-return new class extends Migration
+use App\Http\Controllers\Controller;
+use App\Models\Participant;
+use App\Models\Event;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
+class ParticipantController extends Controller
 {
-    public function up(): void
+    public function store(Request $request)
     {
-        Schema::create('participants', function (Blueprint $table) {
-            $table->id();
+        $validator = Validator::make($request->all(), [
+            'event_id' => 'required|exists:events,id',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email',
+            'phone'    => 'nullable|string|max:15',
+        ]);
 
-            $table->string('name');
-            $table->string('email');
-            $table->string('phone')->nullable();
-            $table->enum('status', ['registered', 'attended', 'cancelled'])
-                  ->default('registered');
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
 
-            $table->foreignId('event_id')
-                  ->constrained('events')
-                  ->cascadeOnDelete();
+        $event = Event::findOrFail($request->event_id);
 
-            $table->timestamps();
-        });
+        // Cek Kuota
+        $count = Participant::where('event_id', $request->event_id)->count();
+        if ($count >= $event->quota) {
+            return response()->json(['message' => 'Maaf, kuota event sudah penuh'], 400);
+        }
+
+        $participant = Participant::create([
+            'event_id' => $request->event_id,
+            'user_id'  => Auth::id(),
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'phone'    => $request->phone,
+            'status'   => 'registered' // HARUS sesuai dengan list di migration
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendaftar event',
+            'data'    => $participant
+        ], 201);
     }
 
-    public function down(): void
+    // Fungsi untuk Admin mengubah status ke 'attended' atau 'cancelled'
+    public function updateStatus(Request $request, $id)
     {
-        Schema::dropIfExists('participants');
+        $request->validate([
+            'status' => 'required|in:registered,attended,cancelled'
+        ]);
+
+        $participant = Participant::findOrFail($id);
+        $participant->update(['status' => $request->status]);
+
+        return response()->json(['message' => 'Status peserta diperbarui']);
     }
-};
+}

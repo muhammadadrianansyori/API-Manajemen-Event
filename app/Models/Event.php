@@ -4,9 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Category;
-use App\Models\User;
-use App\Models\Participant;
 
 class Event extends Model
 {
@@ -18,24 +15,18 @@ class Event extends Model
         'quota',
         'location',
         'category_id',
-        'created_by',
+        'created_by', // <-- Pastikan baris ini ADA
     ];
 
-    // 🔗 relasi ke category
+    // Relasi ke Category
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
-    // 🔗 relasi ke user (creator event)
+    // Relasi ke User (Creator)
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    // 🔗 relasi ke participant
-    public function participants()
-    {
-        return $this->hasMany(Participant::class);
     }
 }
