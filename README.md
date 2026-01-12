@@ -38,16 +38,17 @@ mata kuliah **Pemrograman Web Service**.
   - Pengelolaan repository GitHub
   - Pengujian endpoint utama
 
-- **Nayla Kanaya** – Anggota  
-  Tugas:
+- **Izza Mahendra** - Anggota
+ Tugas:
   - Perancangan dan implementasi database
   - Pembuatan endpoint CRUD data event
   - Pendaftaran peserta ke event
+    
+- **Nayla Kanaya** – Anggota  
+  Tugas:
   - Pencatatan log aktivitas sistem
   - Penyusunan dokumentasi API
-- **Izza Mahendra** - Anggota
-  Tugas:
-  -
+
 
 ## ▶️ Cara Menjalankan Project
 1. Clone repository ini:
